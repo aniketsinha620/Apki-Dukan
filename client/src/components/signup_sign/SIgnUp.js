@@ -31,8 +31,8 @@ const SIgnUp = () => {
     const senddata = async (e) => {
         e.preventDefault();
         const { fname, email, mobile, password, cpassword } = udata;
-
-        const res = await fetch("register", {
+        console.log(udata)
+        const res = await fetch("http://localhost:8000/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -46,17 +46,17 @@ const SIgnUp = () => {
         // console.log(data);
 
 
-        if(res.status === 422 || !data){
+        if (res.status === 422 || !data) {
             // alert("no data")
-            toast.warn("invalid details",{
+            toast.warn("invalid details", {
                 position: "top-center",
             })
-        }else{
+        } else {
             // alert("data succesfully adde");
-            toast.success("data succesfully added",{
+            toast.success("data succesfully added", {
                 position: "top-center",
             })
-            setUdata({...udata,fname:"",email:"",mobile:"",password:"",cpassword:""});
+            setUdata({ ...udata, fname: "", email: "", mobile: "", password: "", cpassword: "" });
         }
     }
 

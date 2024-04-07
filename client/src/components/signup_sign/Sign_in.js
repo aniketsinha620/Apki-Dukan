@@ -1,4 +1,4 @@
-import React, { useState,useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import "./signup.css"
 import { ToastContainer, toast } from 'react-toastify';
@@ -30,8 +30,8 @@ const Sign_in = () => {
         e.preventDefault();
 
         const { email, password } = logdata;
-
-        const res = await fetch("/login", {
+          console.log(logdata)
+        const res = await fetch("http://localhost:8000/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -45,18 +45,18 @@ const Sign_in = () => {
         const data = await res.json();
         console.log(data);
 
-        if(res.status == 400 || !data){
+        if (res.status == 400 || !data) {
             console.log("invalid details");
-            toast.warn("invalid details",{
+            toast.warn("invalid details", {
                 position: "top-center",
             })
-        }else{
+        } else {
             console.log("data valid");
             setAccount(data)
-            toast.success("user valid",{
+            toast.success("user valid", {
                 position: "top-center",
             })
-            setData({...logdata,email:"",password:""});
+            setData({ ...logdata, email: "", password: "" });
         }
     }
 

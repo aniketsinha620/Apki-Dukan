@@ -8,19 +8,19 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const Cart = () => {
 
-
+  const navigate = useNavigate();
   const { id } = useParams("");
-  // console.log(id);
+  console.log(id);
 
   const history = useNavigate("");
 
   const { account, setAccount } = useContext(LoginContext)
 
   const [inddata, setInddata] = useState("");
-  console.log(inddata);
+  console.log(inddata, "inddata");
 
   const getinddata = async () => {
-    const res = await fetch(`/getproductsone/${id}`, {
+    const res = await fetch(`http://localhost:8000/getproductsone/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -28,7 +28,7 @@ const Cart = () => {
     });
 
     const data = await res.json();
-    // console.log(data);
+    console.log(data);
 
     if (res.status !== 201) {
       console.log("no data available");
@@ -40,12 +40,13 @@ const Cart = () => {
   }
 
   useEffect(() => {
-    setTimeout(getinddata,1000)
+    setTimeout(getinddata, 1000)
   }, [id]);
 
   // add cart function
   const addtocart = async (id) => {
-    const checkres = await fetch(`/addcart/${id}`, {
+    console.log(id)
+    const checkres = await fetch(`http://localhost:8000/addcart/${id}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -80,7 +81,7 @@ const Cart = () => {
           <img src={inddata.detailUrl} alt="cart_img" />
           <div className="cart_btn">
             <button className='cart_btn1' onClick={() => addtocart(inddata.id)}>Add to Cart</button>
-            <button className='cart_btn2'>Buy Now</button>
+            <button className='cart_btn2' onClick={() => navigate('/buynow')}>Buy Now</button>
           </div>
         </div>
         <div className="right_cart">
@@ -102,9 +103,9 @@ const Cart = () => {
     }
 
     {!inddata ? <div className="circle">
-          <CircularProgress />
-          <h2> Loading....</h2>
-        </div> : ""}
+      <CircularProgress />
+      <h2> Loading....</h2>
+    </div> : ""}
   </div>
 };
 

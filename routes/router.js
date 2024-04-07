@@ -39,7 +39,7 @@ router.get("/getproductsone/:id", async (req, res) => {
 // register data
 
 router.post("/register", async (req, res) => {
-    // console.log(req.body);
+    console.log(req.body);
 
     const { fname, email, mobile, password, cpassword } = req.body;
 
@@ -67,7 +67,7 @@ router.post("/register", async (req, res) => {
             // password hasing process
 
             const storedata = await finalUser.save();
-            console.log(storedata);
+            console.log(storedata, "savedUser");
 
             res.status(201).json(storedata);
         }
@@ -85,7 +85,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
-
+    console.log(email, password)
     if (!email || !password) {
         res.status(400).json({ error: "fill the all data" })
     };
@@ -98,20 +98,20 @@ router.post("/login", async (req, res) => {
             const isMatch = await bcrypt.compare(password, userlogin.password);
             console.log(isMatch + "pass match");
 
-           
-           
+
+
 
             if (!isMatch) {
                 res.status(400).json({ error: "invalid detials" });
             } else {
 
-                 // token genrate
+                // token genrate
                 const token = await userlogin.generateAuthtokenn();
-                // console.log(token);
-    
-                res.cookie("Amazonweb",token,{
-                    expires:new Date(Date.now() + 900000),
-                    httpOnly:true
+                console.log(token);
+
+                res.cookie("Amazonweb", token, {
+                    expires: new Date(Date.now() + 900000),
+                    httpOnly: true
                 })
                 res.status(201).json(userlogin);
             }
@@ -127,36 +127,38 @@ router.post("/login", async (req, res) => {
 
 // adding the data into cart
 
-router.post("/addcart/:id",athenticate,async(req,res)=>{
+router.post("/addcart/:id", athenticate, async (req, res) => {
     try {
-        const {id} = req.params;
-        const cart = await Products.findOne({id:id});
-        console.log(cart + "cart value");
+        const { id } = req.params;
+        console.log(id, "cart")
+        const cart = await Products.findOne({ id: id });
+        console.log(cart + "cart value12345");
 
-        const UserContact = await USER.findOne({_id:req.userID});
+        const UserContact = await USER.findOne({ _id: req.userID });
         console.log(UserContact);
 
 
-        if(UserContact){
+        if (UserContact) {
             const cartData = await UserContact.addcartdata(cart);
             await UserContact.save();
             console.log(cartData);
             res.status(201).json(UserContact);
-        }else{
-            res.status(401).json({error:"invalid user"});
+        } else {
+            res.status(401).json({ error: "invalid user" });
         }
 
 
     } catch (error) {
-        res.status(401).json({error:"invalid user"});
+        res.status(401).json({ error: "invalid user" });
     }
 });
 
 // get cart details
 
-router.get("/cartdetails",athenticate,async(req,res)=>{
+router.get("/cartdetails", athenticate, async (req, res) => {
     try {
-        const buyuser = await USER.findOne({_id:req.userID});
+        const buyuser = await USER.findOne({ _id: req.userID });
+        console.log(buyuser.carts)
         res.status(201).json(buyuser);
     } catch (error) {
         console.log("error" + error)
@@ -166,9 +168,9 @@ router.get("/cartdetails",athenticate,async(req,res)=>{
 
 // get valid user
 
-router.get("/validuser",athenticate,async(req,res)=>{
+router.get("/validuser", athenticate, async (req, res) => {
     try {
-        const validuserone = await USER.findOne({_id:req.userID});
+        const validuserone = await USER.findOne({ _id: req.userID });
         res.status(201).json(validuserone);
     } catch (error) {
         console.log("error" + error)
@@ -177,11 +179,11 @@ router.get("/validuser",athenticate,async(req,res)=>{
 
 
 // remove item from cart
-router.delete("/remove/:id",athenticate,async(req,res)=>{
+router.delete("/remove/:id", athenticate, async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
-        req.rootUser.carts = req.rootUser.carts.filter((cruval)=>{
+        req.rootUser.carts = req.rootUser.carts.filter((cruval) => {
             return cruval.id != id;
         });
 
@@ -199,17 +201,17 @@ router.delete("/remove/:id",athenticate,async(req,res)=>{
 // for user logout
 
 
-router.get("/lougout",athenticate,(req,res)=>{
+router.get("/lougout", athenticate, (req, res) => {
     try {
-        req.rootUser.tokens = req.rootUser.tokens.filter((curelem)=>{
+        req.rootUser.tokens = req.rootUser.tokens.filter((curelem) => {
             return curelem.token !== req.token
         });
 
 
-        res.clearCookie("Amazonweb",{path:"/"});
+        res.clearCookie("Amazonweb", { path: "/" });
 
         req.rootUser.save();
-        res.status(201).json(req.rootUser.tokens); 
+        res.status(201).json(req.rootUser.tokens);
         console.log("uuser logout");
     } catch (error) {
         // res.status(01).json(req.rootUser.toekns);
@@ -232,6 +234,6 @@ module.exports = router;
 
 
 
-// console.log(isMatch);    
+// console.log(isMatch);
 
 // res.cookie('rememberme', token, { expires: new Date(Date.now() + 900000), httpOnly: true });

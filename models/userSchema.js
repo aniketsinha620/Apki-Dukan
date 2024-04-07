@@ -63,20 +63,20 @@ userSchema.pre("save", async function (next) {
 
 // token genrate 
 
-userSchema.methods.generateAuthtokenn = async function(){
+userSchema.methods.generateAuthtokenn = async function () {
     try {
-        let token = jwt.sign({_id:this._id},secretKey);
-        this.tokens = this.tokens.concat({token:token});
+        let token = jwt.sign({ _id: this._id }, secretKey);
+        this.tokens = this.tokens.concat({ token: token });
         await this.save();
         return token;
     } catch (error) {
-        console.log(error);
+        console.log("hello");
     }
 }
 
 
 // add tocart data
-userSchema.methods.addcartdata = async function(cart){
+userSchema.methods.addcartdata = async function (cart) {
     try {
         this.carts = this.carts.concat(cart);
         await this.save();
