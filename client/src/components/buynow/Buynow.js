@@ -8,7 +8,6 @@ import "./buynow.css";
 const Buynow = () => {
 
     const [cartdata, setCartdata] = useState("");
-    console.log(cartdata, "hello")
 
     const getdatabuy = async () => {
 
@@ -27,7 +26,6 @@ const Buynow = () => {
             console.log("error");
         } else {
             setCartdata(data.carts);
-            console.log(cartdata,"hello")
         }
     };
 

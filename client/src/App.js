@@ -10,15 +10,16 @@ import Buynow from './components/buynow/Buynow';
 import { Routes, Route } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
-
+import { useAuthContext } from './components/context/AuthContext';
+import Aniket from './components/Aniket';
 function App() {
 
   const [data, setData] = useState(false);
-
-
+  const { auth } = useAuthContext()
   useEffect(() => {
     setTimeout(() => {
       setData(true)
+     
     }, 3000)
   }, [])
 
@@ -30,7 +31,7 @@ function App() {
             <Navbaar />
             <Newnav />
             <Routes>
-              <Route path="/" element={<Maincomp />} />
+              <Route path="/" element={ <Maincomp /> } />
               <Route path="/login" element={<Sign_in />} />
               <Route path="/register" element={<SIgnUp />} />
               <Route path="/getproductsone/:id" element={<Cart />} />
@@ -55,6 +56,6 @@ export default App;
 
 
 
-// A>B>C>D 
+// A>B>C>D
 // A ->  props
 // store 5 userdata

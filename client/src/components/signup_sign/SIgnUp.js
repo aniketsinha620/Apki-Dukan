@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuthContext } from '../context/AuthContext';
 
 const SIgnUp = () => {
+    const navigate = useNavigate(); // Initialize useNavigate
+    const { setAuthUser } = useAuthContext();
 
     const [udata, setUdata] = useState({
         fname: "",
@@ -15,18 +18,14 @@ const SIgnUp = () => {
 
     console.log(udata);
 
-
     const adddata = (e) => {
         const { name, value } = e.target;
 
-        setUdata(() => {
-            return {
-                ...udata,
-                [name]: value
-            }
-        })
+        setUdata((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
     };
-
 
     const senddata = async (e) => {
         e.preventDefault();
@@ -43,20 +42,20 @@ const SIgnUp = () => {
         });
 
         const data = await res.json();
-        // console.log(data);
-
+        console.log(data);
 
         if (res.status === 422 || !data) {
-            // alert("no data")
             toast.warn("invalid details", {
                 position: "top-center",
             })
         } else {
-            // alert("data succesfully adde");
             toast.success("data succesfully added", {
                 position: "top-center",
-            })
+            });
+            localStorage.setItem("Users", JSON.stringify(data));
+            setAuthUser(data);
             setUdata({ ...udata, fname: "", email: "", mobile: "", password: "", cpassword: "" });
+            navigate("/"); // Redirect to the home page
         }
     }
 
@@ -80,7 +79,6 @@ const SIgnUp = () => {
                             <label htmlFor="email">Email</label>
                             <input type="text"
                                 onChange={adddata}
-                                // onChange={(e)=>setUdata({...udata,email:e.target.value})}
                                 value={udata.email}
                                 name="email" id="email" />
                         </div>
@@ -119,4 +117,4 @@ const SIgnUp = () => {
     )
 }
 
-export default SIgnUp
+export default SIgnUp;

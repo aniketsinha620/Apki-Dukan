@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import "./signup.css"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LoginContext } from '../context/ContextProvider';
+import { useAuthContext } from '../context/AuthContext';
 
 const Sign_in = () => {
 
@@ -13,7 +13,8 @@ const Sign_in = () => {
     });
     console.log(logdata);
 
-    const { account, setAccount } = useContext(LoginContext);
+    // const { account, setAccount } = useContext(LoginContext);
+    const { authUser, setAuthUser } = useAuthContext();
 
     const adddata = (e) => {
         const { name, value } = e.target;
@@ -30,16 +31,19 @@ const Sign_in = () => {
         e.preventDefault();
 
         const { email, password } = logdata;
-          console.log(logdata)
+        console.log(logdata)
         const res = await fetch("http://localhost:8000/login", {
             method: "POST",
             headers: {
+                Accept: "application/json",
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 email, password
             })
         });
+        console.log("res", res)
 
 
         const data = await res.json();
@@ -52,7 +56,7 @@ const Sign_in = () => {
             })
         } else {
             console.log("data valid");
-            setAccount(data)
+            setAuthUser(data)
             toast.success("user valid", {
                 position: "top-center",
             })

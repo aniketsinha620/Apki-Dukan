@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import Rightheader from './Rightheader';
 import { NavLink, useNavigate } from "react-router-dom";
-import { LoginContext } from "../context/ContextProvider";
+import { useAuthContext } from '../context/AuthContext';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import List from '@mui/material/List';
@@ -21,8 +21,7 @@ import { useSelector } from "react-redux"
 
 const Navbaar = () => {
 
-
-    const { account, setAccount } = useContext(LoginContext);
+    const { authUser, setAuthUser } = useAuthContext();
     // console.log(account);
 
     const history = useNavigate();
@@ -45,7 +44,7 @@ const Navbaar = () => {
     const [dropen, setDropen] = useState(false)
 
     const getdetailvaliduser = async () => {
-        const res = await fetch("/validuser", {
+        const res = await fetch("http://localhost:8000/validuser", {
             method: "GET",
             headers: {
                 Accept: "application/json",
@@ -61,8 +60,9 @@ const Navbaar = () => {
             console.log("error");
         } else {
             console.log("data valid");
-            setAccount(data);
+            setAuthUser(data);
         }
+        
     };
 
     const handleopen = () => {
@@ -73,10 +73,20 @@ const Navbaar = () => {
         setDropen(false)
     }
 
+    const getAccessToken = () => {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'jwt') {
+                return value;
+            }
+        }
+        return null;
+    };
 
-
+    console.log(getAccessToken())
     const logoutuser = async () => {
-        const res2 = await fetch("/lougout", {
+        const res2 = await fetch("http://localhost:8000/lougout", {
             method: "GET",
             headers: {
                 Accept: "application/json",
@@ -97,9 +107,10 @@ const Navbaar = () => {
                 position: "top-center",
             })
             history("/");
-            setAccount(false);
+            setAuthUser(false);
 
         }
+
     };
 
 
@@ -147,73 +158,73 @@ const Navbaar = () => {
                                     products.filter(product => product.title.longTitle.toLowerCase().includes(text.toLowerCase())).map(product => (
                                         <ListItem>
                                             <NavLink to={`/getproductsone/${product.id}`} onClick={() => setLiopen(true)} >
-                                                { product.title.longTitle }
-                                        </NavLink>
-                                          
+                                                {product.title.longTitle}
+                                            </NavLink>
+
                                         </ListItem>
                                     ))
                                 }
-                    </List>
+                            </List>
                         }
+                    </div>
                 </div>
-            </div>
-            <div className="right">
-                <div className="nav_btn">
-                    <NavLink to="/login">signin</NavLink>
-                </div>
-                <div className="cart_btn">
+                <div className="right">
+                    <div className="nav_btn">
+                        <NavLink to="/login">signin</NavLink>
+                    </div>
+                    <div className="cart_btn">
 
+                        {
+                            authUser ? <NavLink to="/buynow">
+                                <Badge badgeContent={authUser.carts.length} color="primary">
+                                    <ShoppingCartIcon id="icon" />
+                                </Badge>
+                            </NavLink> : <NavLink to="/login">
+                                <Badge badgeContent={0} color="primary">
+                                    <ShoppingCartIcon id="icon" />
+                                </Badge>
+                            </NavLink>
+                        }
+
+                        <ToastContainer />
+
+                        <p>Cart</p>
+                    </div>
                     {
-                        account ? <NavLink to="/buynow">
-                            <Badge badgeContent={account.carts.length} color="primary">
-                                <ShoppingCartIcon id="icon" />
-                            </Badge>
-                        </NavLink> : <NavLink to="/login">
-                            <Badge badgeContent={0} color="primary">
-                                <ShoppingCartIcon id="icon" />
-                            </Badge>
-                        </NavLink>
-                    }
-
-                    <ToastContainer />
-
-                    <p>Cart</p>
-                </div>
-                {
-                    account ? <Avatar className='avtar2'
-                        id="basic-button"
-                        aria-controls={open ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        onClick={handleClick}
-                    >{account.fname[0].toUpperCase()}</Avatar> :
-                        <Avatar className='avtar'
+                        authUser ? <Avatar className='avtar2'
                             id="basic-button"
                             aria-controls={open ? 'basic-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                             onClick={handleClick}
-                        ></Avatar>
-                }
-
-                <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                    }}
-                >
-
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    {
-                        account ? <MenuItem onClick={handleClose} onClick={logoutuser}><LogoutIcon style={{ fontSize: 16, marginRight: 3 }} />Logout</MenuItem> : ""
+                        >{authUser.fname[0].toUpperCase()}</Avatar> :
+                            <Avatar className='avtar'
+                                id="basic-button"
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                            ></Avatar>
                     }
 
-                </Menu>
-            </div>
-        </nav>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+
+                        <MenuItem onClick={handleClose}>{authUser ? authUser.fname.toUpperCase() : "My authUser"}</MenuItem>
+                        {
+                            authUser ? <MenuItem onClick={logoutuser}><LogoutIcon style={{ fontSize: 16, marginRight: 3 }} />Logout</MenuItem> : ""
+                        }
+
+                    </Menu>
+                </div>
+            </nav>
         </header >
     )
 }

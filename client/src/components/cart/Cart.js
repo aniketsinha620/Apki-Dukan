@@ -2,7 +2,7 @@ import { Divider } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import "./cart.css";
-import { LoginContext } from "../context/ContextProvider";
+import { useAuthContext } from '../context/AuthContext';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
@@ -14,7 +14,7 @@ const Cart = () => {
 
   const history = useNavigate("");
 
-  const { account, setAccount } = useContext(LoginContext)
+  const { authUser,setAuthUser } = useAuthContext();
 
   const [inddata, setInddata] = useState("");
   console.log(inddata, "inddata");
@@ -68,7 +68,7 @@ const Cart = () => {
     } else {
       // alert("data added in your cart");
       history("/buynow")
-      setAccount(data1)
+      setAuthUser(data1)
     }
 
   }

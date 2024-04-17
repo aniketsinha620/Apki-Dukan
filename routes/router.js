@@ -46,6 +46,7 @@ router.post("/register", async (req, res) => {
     if (!fname || !email || !mobile || !password || !cpassword) {
         res.status(422).json({ error: "fill the all data" });
         console.log("not data available");
+        return;
     };
 
 
@@ -83,47 +84,82 @@ router.post("/register", async (req, res) => {
 
 // login user api
 
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    console.log(email, password)
-    if (!email || !password) {
-        res.status(400).json({ error: "fill the all data" })
-    };
+// router.post("/login", async (req, res) => {
+//     const { email, password } = req.body;
+//     if (!email || !password) {
+//         res.status(400).json({ error: "fill the all data" })
+//     };
 
-    try {
-        const userlogin = await USER.findOne({ email: email });
-        console.log(userlogin + "user value");
+//     try {
+//         const userlogin = await USER.findOne({ email: email });
+//         // console.log(userlogin + "user value");
 
-        if (userlogin) {
-            const isMatch = await bcrypt.compare(password, userlogin.password);
-            console.log(isMatch + "pass match");
+//         if (userlogin) {
+//             const isMatch = await bcrypt.compare(password, userlogin.password);
+//             // console.log(isMatch + "pass match");
 
+//             if (!isMatch) {
+//                 res.status(400).json({ error: "invalid detials" });
+//             } else {
 
+//                 const token = await userlogin.generateAuthtokenn();
+//                 // console.log(token);
+//                 const options = {
+//                     httpOnly: true,
+//                     secure: true
+//                 }
+//                 res.cookie("accessToken", token, options)
+//                 res.status(201).json(userlogin);
 
+//             }
 
-            if (!isMatch) {
-                res.status(400).json({ error: "invalid detials" });
-            } else {
+//         } else {
+//             res.status(400).json({ error: "invalid detials" })
+//         }
+//     } catch (error) {
+//         res.status(400).json({ error: "invalid detials" })
+//     }
+// })
 
-                // token genrate
-                const token = await userlogin.generateAuthtokenn();
-                console.log(token);
+// router.post("/login", async (req, res) => {
+//     const { email, password } = req.body;
 
-                res.cookie("Amazonweb", token, {
-                    expires: new Date(Date.now() + 900000),
-                    httpOnly: true
-                })
-                res.status(201).json(userlogin);
-            }
+//     if (!email || !password) {
+//         return res.status(400).json({ error: "Please fill in all the required fields" });
+//     }
 
-        } else {
-            res.status(400).json({ error: "invalid detials" })
-        }
-    } catch (error) {
-        res.status(400).json({ error: "invalid detials" })
-    }
-})
+//     try {
+//         const userlogin = await USER.findOne({ email: email });
 
+//         if (!userlogin) {
+//             return res.status(400).json({ error: "Invalid email or password" });
+//         }
+
+//         const isMatch = await bcrypt.compare(password, userlogin.password);
+
+//         if (!isMatch) {
+//             return res.status(400).json({ error: "Invalid email or password" });
+//         }
+
+//         const token = await userlogin.generateAuthtokenn();
+
+//         if (!token) {
+//             return res.status(500).json({ error: "Failed to generate authentication token" });
+//         }
+
+//         const options = {
+//             httpOnly: true,
+//             secure: true
+//         };
+
+//         res.cookie("accessToken", token, options);
+//         return res.status(200).json(userlogin);
+
+//     } catch (error) {
+//         console.error("Error during login:", error);
+//         return res.status(500).json({ error: "Internal server error" });
+//     }
+// });
 
 // adding the data into cart
 
@@ -158,7 +194,7 @@ router.post("/addcart/:id", athenticate, async (req, res) => {
 router.get("/cartdetails", athenticate, async (req, res) => {
     try {
         const buyuser = await USER.findOne({ _id: req.userID });
-        console.log(buyuser.carts)
+        // console.log(buyuser.carts)
         res.status(201).json(buyuser);
     } catch (error) {
         console.log("error" + error)
@@ -195,20 +231,14 @@ router.delete("/remove/:id", athenticate, async (req, res) => {
         res.status(400).json(req.rootUser);
     }
 })
-
-// token1,toekn2,token3,
-
-// for user logout
-
-
-router.get("/lougout", athenticate, (req, res) => {
+router.get("/lougout", (req, res) => {
     try {
         req.rootUser.tokens = req.rootUser.tokens.filter((curelem) => {
             return curelem.token !== req.token
         });
 
 
-        res.clearCookie("Amazonweb", { path: "/" });
+        res.clearCookie("accessToken", { path: "/" });
 
         req.rootUser.save();
         res.status(201).json(req.rootUser.tokens);
@@ -218,6 +248,43 @@ router.get("/lougout", athenticate, (req, res) => {
         console.log("error for user logout");
     }
 })
+
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    console.log(email, password)
+    if (!email || !password) {
+        return res.status(400).json({ error: "Please fill in all the required fields" });
+    }
+    try {
+
+        const userlogin = await USER.findOne({ email: email });
+        if (!userlogin) {
+            return res.status(400).json({ error: "Invalid email or password" });
+        }
+        const isMatch = await bcrypt.compare(password, userlogin.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ error: "Invalid email or password" });
+        }
+        const token = await userlogin.generateAuthtokenn();
+
+        if (!token) {
+            return res.status(500).json({ error: "Failed to generate authentication token" });
+        }
+
+        const options = {
+            httpOnly: true,
+            secure: true
+        };
+        res.cookie("accessToken", token, options);
+        return res.status(200).json(userlogin);
+    } catch (error) {
+        console.log(error)
+    }
+
+
+
+});
 
 module.exports = router;
 

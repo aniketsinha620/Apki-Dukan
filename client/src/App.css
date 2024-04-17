@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
 
 
-body{
+body {
   font-family: 'Open Sans', sans-serif;
+  height:fit-content;
+  /* background-color: black; */
 }
 
-.circle{
+.circle {
   width: 100%;
   height: 100vh;
   display: flex;
@@ -13,6 +15,6 @@ body{
   align-items: center;
 }
 
-.circle h2{
+.circle h2 {
   margin-left: 10px;
 }
