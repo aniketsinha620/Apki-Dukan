@@ -4,7 +4,7 @@ const Products = require("../models/productsSchema");
 const USER = require("../models/userSchema");
 const bcrypt = require("bcryptjs");
 const athenticate = require("../middleware/authenticate");
-
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 // get productsdata api
 router.get("/getproducts", async (req, res) => {
@@ -286,8 +286,41 @@ router.post('/login', async (req, res) => {
 
 });
 
-module.exports = router;
 
+
+
+router.post('/stripe/create-checkout-session', athenticate, async (req, res) => {
+    const { iteam } = req.body;
+    const lineItems = iteam.map((product) => ({
+        price_data: {
+            currency: "inr", // Use "inr" for Indian Rupee
+            product_data: {
+                name: product.title.shortTitle,
+                images: [product.url] // Pass an array of image URLs
+            },
+            unit_amount: product.price.cost * 100 // Stripe requires the amount to be in the smallest currency unit (e.g., paise)
+        },
+        quantity: 1
+    }));
+
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: lineItems,
+            mode: "payment",
+            success_url: "http://localhost:3000/",
+            cancel_url: "http://localhost:3000/login"
+        });
+
+        res.json(session.id);
+    } catch (error) {
+        console.error("Error creating Stripe session:", error);
+        res.status(500).json({ error: "Failed to create Stripe session" });
+    }
+});
+
+module.exports = router;
 
 
 
