@@ -11,7 +11,7 @@ import { Routes, Route } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from './components/context/AuthContext';
-import Aniket from './components/Aniket';
+
 function App() {
 
   const [data, setData] = useState(false);
