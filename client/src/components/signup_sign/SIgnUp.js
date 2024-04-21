@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuthContext } from '../context/AuthContext';
+import { BASE_URL } from '../../helper';
 
 const SIgnUp = () => {
     const navigate = useNavigate(); // Initialize useNavigate
@@ -31,7 +32,7 @@ const SIgnUp = () => {
         e.preventDefault();
         const { fname, email, mobile, password, cpassword } = udata;
         console.log(udata)
-        const res = await fetch("http://localhost:8000/register", {
+        const res = await fetch(`${BASE_URL}/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

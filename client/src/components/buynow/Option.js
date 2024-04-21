@@ -2,15 +2,16 @@ import { React, useContext } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { BASE_URL } from '../../helper';
 
 const Option = ({ deletedata, get }) => {
 
-  const { authUser,setAuthUser } = useAuthContext();
+  const { authUser, setAuthUser } = useAuthContext();
 
 
   const removedata = async (req, res) => {
     try {
-      const res = await fetch(`/remove/${deletedata}`, {
+      const res = await fetch(`${BASE_URL}/remove/${deletedata}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",

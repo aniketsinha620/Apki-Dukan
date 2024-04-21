@@ -17,6 +17,7 @@ import ListItem from '@mui/material/ListItem';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ToastContainer, toast } from 'react-toastify';
 import { useSelector } from "react-redux"
+import { BASE_URL } from '../../helper';
 
 
 const Navbaar = () => {
@@ -44,7 +45,7 @@ const Navbaar = () => {
     const [dropen, setDropen] = useState(false)
 
     const getdetailvaliduser = async () => {
-        const res = await fetch("http://localhost:8000/validuser", {
+        const res = await fetch(`${BASE_URL}/validuser`, {
             method: "GET",
             headers: {
                 Accept: "application/json",
@@ -62,7 +63,7 @@ const Navbaar = () => {
             console.log("data valid");
             setAuthUser(data);
         }
-        
+
     };
 
     const handleopen = () => {
@@ -86,7 +87,7 @@ const Navbaar = () => {
 
     console.log(getAccessToken())
     const logoutuser = async () => {
-        const res2 = await fetch("http://localhost:8000/lougout", {
+        const res2 = await fetch(`${BASE_URL}/lougout`, {
             method: "GET",
             headers: {
                 Accept: "application/json",

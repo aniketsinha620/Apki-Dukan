@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import "./cart.css";
 import { useAuthContext } from '../context/AuthContext';
 import CircularProgress from '@mui/material/CircularProgress';
+import { BASE_URL } from '../../helper';
 
 
 const Cart = () => {
@@ -14,13 +15,13 @@ const Cart = () => {
 
   const history = useNavigate("");
 
-  const { authUser,setAuthUser } = useAuthContext();
+  const { authUser, setAuthUser } = useAuthContext();
 
   const [inddata, setInddata] = useState("");
   console.log(inddata, "inddata");
 
   const getinddata = async () => {
-    const res = await fetch(`http://localhost:8000/getproductsone/${id}`, {
+    const res = await fetch(`${BASE_URL}/getproductsone/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -46,7 +47,7 @@ const Cart = () => {
   // add cart function
   const addtocart = async (id) => {
     console.log(id)
-    const checkres = await fetch(`http://localhost:8000/addcart/${id}`, {
+    const checkres = await fetch(`${BASE_URL}/addcart/${id}`, {
       method: "POST",
       headers: {
         Accept: "application/json",

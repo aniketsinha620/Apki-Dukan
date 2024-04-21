@@ -4,6 +4,7 @@ import "./signup.css"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuthContext } from '../context/AuthContext';
+import { BASE_URL } from '../../helper';
 
 const Sign_in = () => {
 
@@ -32,7 +33,7 @@ const Sign_in = () => {
 
         const { email, password } = logdata;
         console.log(logdata)
-        const res = await fetch("http://localhost:8000/login", {
+        const res = await fetch(`${BASE_URL}/login`, {
             method: "POST",
             headers: {
                 Accept: "application/json",
