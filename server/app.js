@@ -10,7 +10,7 @@ const Products = require("./models/productsSchema");
 const DefaultData = require("./defaultdata");
 const cors = require("cors");
 const router = require("./routes/router");
-
+console.log("hello",process.env.PORT)
 
 app.use(express.json());
 app.use(cookieParser());
